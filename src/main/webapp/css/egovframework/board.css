@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+
+.loginForm {
+    padding: 15px;
+    border: 2px solid #ffffff;
+    width: fit-content;
+}
+
+.loginForm input {
+   	margin-right: 5px;
+}
+   
+.loginForm p {
+   	font-weight: 100;
+}
+
+.loginForm span {
+	margin-right: 10px;
+}
+
+.searchForm {
+    margin-bottom: 10px;
+}
