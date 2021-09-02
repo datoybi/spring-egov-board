@@ -8,22 +8,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link type="text/css" rel="stylesheet" href="<c:url value='/css/egovframework/board.css'/>"/>
+<script src="<c:url value='/js/board.js'/>"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <title>board list</title>
-<script>
-	function add() {
-		location.href = "<c:url value='/write.do'/>";
-	}
-	
-	function login() {
-		alert("ok");
-	// action="<c:url value='/login().do'/>"
-	
-	}
-
-</script>
 </head>
 <body>
 	<div class="container">
@@ -53,27 +42,15 @@
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr>
-		      <th scope="row">1</th>
-		      <td><a href="<c:url value='/detail.do'/>">test1</a></td>
-		      <td>관리자</td>
-   		      <td>2021.09.01</td>	      
-		      <td>0</td>
-		    </tr>
-		    <tr>
-		      <th scope="row">2</th>
-		      <td>test2</td>
-		      <td>윤다솜</td>
-   		      <td>2021.09.01</td>	      
-		      <td>0</td>
-		    </tr>
-		    <tr>
-		      <th scope="row">3</th>
-		       <td>test3</td>
-		      <td>사용자</td>
-   		      <td>2021.09.01</td>	      
-		      <td>0</td>
-		    </tr>
+			<c:forEach var="result" items="${resultList}" varStatus="status">
+		  		<tr>
+			      <th scope="row">${status.count}</th>
+			      <td><a href="<c:url value='/detail.do'/>">${result.title}</a></td>
+			      <td>${result.writer}</td>
+	   		      <td>${result.indate}</td>	      
+			      <td>${result.count}</td>
+		    	</tr>
+		  	</c:forEach>
 		  </tbody>
 		</table>
 		<button type="button" class="btn btn-primary" onclick="add()">글 작성</button>

@@ -11,12 +11,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="<c:url value='/js/board.js'/>"></script>
 <title>board detail</title>
-<script>
-	function list() {
-		location.href = "<c:url value='/list.do'/>";
-	}
-</script>
 </head>
 <body>
 	<div class="container">
@@ -44,7 +40,7 @@
 		  </tbody>
 		</table>
 		<button type="button" class="btn btn-primary" onclick="list()">목록</button>
-		<button type="button" class="btn btn-primary" onclick="list()">수정</button>
+		<button type="button" class="btn btn-primary" onclick="update()">수정</button>
 		<button type="button" class="btn btn-danger" onclick="">삭제</button>
 		
 	</div>

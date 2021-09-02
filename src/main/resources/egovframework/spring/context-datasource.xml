@@ -5,11 +5,18 @@
         http://www.springframework.org/schema/jdbc  http://www.springframework.org/schema/jdbc/spring-jdbc-4.0.xsd">
 	
 	<!-- 테스트 실행용 --> 
-	<jdbc:embedded-database id="dataSource" type="HSQL">
+<!-- 	<jdbc:embedded-database id="dataSource" type="HSQL">
 		<jdbc:script location= "classpath:/db/sampledb.sql"/>
 	</jdbc:embedded-database>
-     
-     
+      -->
+     <!--  마리아디비 설정  -->
+     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.mariadb.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/test" />
+        <property name="username" value="root"/>
+        <property name="password" value="1234"/>
+    </bean>
+	
     <!-- hsql (테스트용 메모리 DB)
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="net.sf.log4jdbc.DriverSpy"/>
@@ -17,15 +24,7 @@
         <property name="username" value="sa"/>
     </bean>
     -->  
-    
-    <!-- Mysql (POM에서 commons-dbcp, mysql-connector-java 관련 라이브러리 설정 ) 
-    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://127.0.0.1:3306/example" />
-        <property name="username" value="user"/>
-        <property name="password" value="password"/>
-    </bean>
-    -->
+   
     
     <!-- oracle (POM에서 commons-dbcp, ojdbc(라이센스 사항으로 별도로 배포되지 않음) 관련 라이브러리 설정)
     <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">

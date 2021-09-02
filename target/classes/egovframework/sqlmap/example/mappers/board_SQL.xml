@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.example.board.service.impl.BoardMapper">
+
+	<resultMap id="board" type="egovframework.example.board.service.BoardVO">
+		<result property="idx" column="idx"/>
+		<result property="title" column="title"/>
+		<result property="contents" column="contents"/>
+		<result property="count" column="count"/>
+		<result property="writer" column="writer"/>
+		<result property="indate" column="indate"/>
+	</resultMap>
+	
+	<insert id="insertBoard" parameterType="BoardVO">
+
+			INSERT INTO TB_BOARD
+				( ID
+				  , NAME
+				  , DESCRIPTION
+				  , USE_YN
+				  , REG_USER )
+			VALUES ( #{id}
+				  , #{name}
+				  , #{description}
+				  , #{useYn}
+				  , #{regUser} )
+
+	</insert>
+
+	<update id="updateBoard">
+
+			UPDATE TB_BOARD
+			SET ID=#{id}
+				, NAME=#{name}
+				, DESCRIPTION=#{description}
+				, USE_YN=#{useYn}
+				  WHERE ID=#{id}
+
+	</update>
+
+	<delete id="deleteBoard">
+
+			DELETE FROM TB_BOARD
+			WHERE ID=#{id}
+
+	</delete>
+
+	<select id="selectBoard" resultMap="board">
+
+			SELECT
+				IDX, TITLE, CONTENTS, COUNT, WRITER, INDATE
+			FROM TB_BOARD
+			WHERE IDX=#{idx}
+	</select>
+
+	<select id="selectBoardList" parameterType="boardVO" resultType="egovMap">
+
+			SELECT
+				IDX as idx
+				, TITLE as title
+				, CONTENTS as contents
+				, COUNT as count
+				, WRITER as writer
+				, INDATE as indate
+			FROM TB_BOARD
+			WHERE 1=1
+			ORDER BY IDX DESC
+<!-- 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+ -->	</select>
+
+	<select id="selectBoardListTotCnt" parameterType="boardVO" resultType="int">
+
+			SELECT COUNT(*) totcnt
+			FROM TB_BOARD
+			WHERE 1=1 
+			
+	</select>
+
+</mapper>
