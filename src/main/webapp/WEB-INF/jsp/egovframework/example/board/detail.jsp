@@ -18,10 +18,22 @@
 	<div class="container">
 		<div class="jumbotron">
 			<h2>Egov 게시판 - 상세화면</h2><br>
-			<div class="loginForm">
-				<span>뫄뫄님이 로그인하셨습니다.</span>
-			<button type="button" class="btn btn-sm btn-outline-primary">로그아웃</button>
-		  </div>
+			 <c:if test ="${empty loginid && empty userName}">
+			 	<div class="loginForm">
+					<p>로그인</p>
+					<form class="form-inline searchForm" id="loginForm" action="<c:url value='/login.do'/>" method="post" onsubmit="login(); return false;">
+					    <input type="text" class="form-control" id="loginid" placeholder="아이디를 입력하세요" name="loginid">
+					    <input type="password" class="form-control" id="loginpwd" placeholder="비밀번호를 입력하세요" name="loginpwd">
+						<button type="submit" class="btn btn-outline-primary">로그인</button>
+					</form>
+			  	</div>
+			</c:if>
+			<c:if test ="${not empty loginid && not empty userName}">
+				<div class="loginForm">
+					<span>${userName} 님이 로그인하셨습니다.</span>
+					<button type="button" class="btn btn-sm btn-outline-primary" onclick="logout()">로그아웃</button>
+ 				</div>	
+			</c:if>
 		</div>
 		<table class="table">
 		  <thead>
@@ -40,7 +52,7 @@
 		  </tbody>
 		</table>
 		<button type="button" class="btn btn-primary" onclick="list()">목록</button>
-		<button type="button" class="btn btn-primary" onclick="update()">수정</button>
+		<button type="button" class="btn btn-primary" onclick="add()">수정</button>
 		<button type="button" class="btn btn-danger" onclick="">삭제</button>
 		
 	</div>

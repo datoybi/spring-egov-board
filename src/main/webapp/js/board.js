@@ -1,18 +1,31 @@
 function add() {
-	location.href = "<c:url value='/write.do'/>";
+	location.href = "/board_test/write.do";
 }
 
 function login() {
-	alert("ok");
-	let id = document.getEpelemetById("id");
-//		if(email.v)
-//	 action="<c:url value='/login().do'/>"
-
+	let loginForm = document.getElementById("loginForm");
+	
+	if(loginForm.loginid.value == '') { 
+		alert('아이디를 입력하세요');
+		loginForm.loginid.focus();
+		return false;
+	} else if(loginForm.loginpwd.value == ''){
+		alert('비밀번호를 입력하세요');
+		loginForm.loginpwd.focus();
+		return false;
+	} else {
+		loginForm.submit();
+	}
+	
 }
 
 function list() {
-	location.href="<c:url value='/list.do'/>";
+	location.href = "/board_test/list.do";
 }
-function update() {
-	location.href = "<c:url value='/write.do'/>";
+
+function logout() {
+	let check = confirm("로그아웃 하시겠습니까?");
+	if(check == true) {
+		location.href="/board_test/logout.do";
+	} 
 }

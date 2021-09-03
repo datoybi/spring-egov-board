@@ -136,4 +136,13 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
 		return boardDAO.selectBoardListTotCnt(vo);
 	}
 
+	
+	public String loginCheck(BoardVO vo) throws Exception {
+		return boardDAO.loginCheck(vo);
+	}
+	
+	public List<?> searchBoardList(BoardVO vo) throws Exception {
+		return boardDAO.searchBoardList(vo);
+	}
+	
 }

@@ -67,4 +67,8 @@ public interface EgovBoardService {
 	 */
 	int selectBoardListTotCnt(BoardVO vo);
 
+	String loginCheck(BoardVO vo) throws Exception;
+	
+	List<?> searchBoardList(BoardVO vo) throws Exception;
+
 }

@@ -11,6 +11,29 @@
 		<result property="indate" column="indate"/>
 	</resultMap>
 	
+	<select id="loginCheck" parameterType="BoardVO" resultType="String">
+		SELECT USER_NAME
+		FROM TB_USER
+		WHERE 1=1
+		AND PASSWORD = #{password} 
+		AND USER_ID = #{userId}
+	</select>
+	
+	<select id="searchBoardList" parameterType="BoardVO" resultType="egovMap">
+			SELECT
+				IDX as idx
+				, TITLE as title
+				, CONTENTS as contents
+				, IFNULL(COUNT, 0) as count
+				, WRITER as writer
+				, INDATE as indate
+			FROM TB_BOARD
+			WHERE 1=1 
+			AND TITLE LIKE '%#{searchWord}%'
+			ORDER BY IDX DESC	
+			
+</select>
+	
 	<insert id="insertBoard" parameterType="BoardVO">
 
 			INSERT INTO TB_BOARD
@@ -59,7 +82,7 @@
 				IDX as idx
 				, TITLE as title
 				, CONTENTS as contents
-				, COUNT as count
+				, IFNULL(COUNT, 0) as count
 				, WRITER as writer
 				, INDATE as indate
 			FROM TB_BOARD

@@ -22,6 +22,9 @@ import egovframework.example.board.service.BoardVO;
 import egovframework.rte.fdl.property.EgovPropertyService;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springmodules.validation.commons.DefaultBeanValidator;
 
 
@@ -70,7 +74,7 @@ public class EgovBoardController {
 	@RequestMapping(value = "/list.do")
 	public String list(@ModelAttribute("boardVO") BoardVO boardVO, Model model) throws Exception {
 		int totCnt = boardService.selectBoardListTotCnt(boardVO);
-		System.out.println("[System.out] " + totCnt);
+//		System.out.println("[System.out] " + totCnt);
 		
 		List<?> list = boardService.selectBoardList(boardVO);
 		System.out.println("[System.out] " + list);
@@ -89,7 +93,40 @@ public class EgovBoardController {
 		return "board/write";
 	}
 
+	@RequestMapping(value ="/login.do", method = RequestMethod.POST)
+	public String login(@ModelAttribute("boardVO") BoardVO boardVO, @RequestParam("loginid") String loginid, @RequestParam("loginpwd") String loginpwd, HttpServletRequest request, RedirectAttributes redirectAttributes) throws Exception {
+//		System.out.println("[System.out] " + loginid + " , " + loginpwd);
+
+		BoardVO vo = new BoardVO();
+		vo.setPassword(loginpwd);
+		vo.setUserId(loginid);
+				
+		String userName = boardService.loginCheck(vo);
+		if(userName != null) {
+			request.getSession().setAttribute("loginid", loginid);
+			request.getSession().setAttribute("userName", userName);
+		} else {
+			redirectAttributes.addFlashAttribute("loginMsg" , false);
+		}
+		
+		return "redirect:/list.do";
+	}
 	
+	@RequestMapping(value ="/logout.do")
+	public String login(HttpServletRequest request) throws Exception {
+		System.out.println("[System.out] " + request.getSession().getAttribute("loginid"));
+		System.out.println("[System.out] " + request.getSession().getAttribute("userName"));
+		
+		request.getSession().invalidate();
+		
+		System.out.println("[System.out] " + request.getSession().getAttribute("loginid"));
+		System.out.println("[System.out] " + request.getSession().getAttribute("userName"));
+	
+		return "redirect:/list.do";
+		
+				
+	}
+
 //	/**
 //	 * 글 등록 화면을 조회한다.
 //	 * @param boardVO - 목록 조회조건 정보가 담긴 VO
