@@ -67,15 +67,15 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
 	 */
 	@Override
 	public String insertBoard(BoardVO vo) throws Exception {
-		LOGGER.debug(vo.toString());
+//		LOGGER.debug(vo.toString());
 
 		/** ID Generation Service */
-		String id = egovIdGnrService.getNextStringId();
-	//	vo.setId(id);
-		LOGGER.debug(vo.toString());
+//		String id = egovIdGnrService.getNextStringId();
+//		vo.setId(id);
+//		LOGGER.debug(vo.toString());
 
 		boardDAO.insertBoard(vo);
-		return id;
+		return vo.getIdx();
 	}
 
 	/**

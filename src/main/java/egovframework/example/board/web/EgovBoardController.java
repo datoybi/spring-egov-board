@@ -76,24 +76,46 @@ public class EgovBoardController {
 		int totCnt = boardService.selectBoardListTotCnt(boardVO);
 //		System.out.println("[System.out] " + totCnt);
 		
-		List<?> list = boardService.selectBoardList(boardVO);
-		System.out.println("[System.out] " + list);
+		List<?> list = boardService.searchBoardList(boardVO);
+//		System.out.println("[System.out] " + list);
 
 		model.addAttribute("resultList", list);
 		return "board/list";
 	}
 	
 	@RequestMapping(value ="/detail.do")
-	public String detail() throws Exception {
+	public String detail(@ModelAttribute("boardVO") BoardVO boardVO, Model model) throws Exception {
+		// System.out.println("[System.out] " + boardVO.getIdx()); 
+		BoardVO selectedVO = boardService.selectBoard(boardVO);
+		// System.out.println("[System.out] " + selectedVO.getIdx() + " , " + selectedVO.getContents()); 
+
+		model.addAttribute("result", selectedVO);
+		
 		return "board/detail";
 	}
 
-	@RequestMapping(value ="/write.do")
+	@RequestMapping(value ="/write.do",  method = RequestMethod.GET)
 	public String write() throws Exception {
+//		System.out.println("[System.out] " + "writer get");
+
 		return "board/write";
 	}
+	
+	@RequestMapping(value = "/write.do", method = RequestMethod.POST)
+	public String write(@ModelAttribute("boardVO") BoardVO boardVO, HttpServletRequest request, @RequestParam("mode") String mode) throws Exception {
+		
+		String writer = (String) request.getSession().getAttribute("userName"); // 이름 세팅
+		boardVO.setWriter(writer);
+		
+//		System.out.println("[System.out] " + boardVO.getContents() + " , " + boardVO.getTitle() + " , " + boardVO.getWriter());
+//		boardService.insertBoard(boardVO);
+		
+		
+		System.out.println("[System.out] " + mode);
+		return "redirect:/list.do";
+	}
 
-	@RequestMapping(value ="/login.do", method = RequestMethod.POST)
+	@RequestMapping(value ="/login.do")
 	public String login(@ModelAttribute("boardVO") BoardVO boardVO, @RequestParam("loginid") String loginid, @RequestParam("loginpwd") String loginpwd, HttpServletRequest request, RedirectAttributes redirectAttributes) throws Exception {
 //		System.out.println("[System.out] " + loginid + " , " + loginpwd);
 
@@ -123,10 +145,10 @@ public class EgovBoardController {
 		System.out.println("[System.out] " + request.getSession().getAttribute("userName"));
 	
 		return "redirect:/list.do";
-		
 				
 	}
 
+	
 //	/**
 //	 * 글 등록 화면을 조회한다.
 //	 * @param boardVO - 목록 조회조건 정보가 담긴 VO

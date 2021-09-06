@@ -2,7 +2,7 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form"   uri="http://www.springframework.org/tags/form" %>
-
+<%@ taglib prefix="fmt"  uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -23,8 +23,6 @@
 		</c:if>
 	})
 	
-	
-
 </script>
 </head>
 <body>
@@ -51,9 +49,9 @@
  			</c:if>
 			 
 		</div>
-		<form class="form-inline" id="searchForm" action="">
-		    <input type="text" class="form-control" id="search" width="33%" placeholder="검색어를 입력하세요" name="search">
-			<button type="button" class="btn btn-outline-primary">검색</button>
+		<form class="form-inline" id="searchForm" method="post" action="<c:url value='/list.do'/>">
+		    <input type="text" class="form-control" id="searchKeyword" width="33%" placeholder="검색어를 입력하세요" name="searchKeyword">
+			<button type="submit" class="btn btn-outline-primary">검색</button>
 		</form>
 		<table class="table table-hover">
 		  <thead>
@@ -69,15 +67,17 @@
 			<c:forEach var="result" items="${resultList}" varStatus="status">
 		  		<tr>
 			      <th scope="row">${status.count}</th>
-			      <td><a href="<c:url value='/detail.do'/>">${result.title}</a></td>
+			      <td><a href="<c:url value='/detail.do?idx=${result.idx}'/>">${result.title}</a></td>
 			      <td>${result.writer}</td>
-	   		      <td>${result.indate}</td>	      
+	   		      <td><fmt:formatDate value="${result.indate}" pattern="yyyy.MM.dd" /></td>	      
 			      <td>${result.count}</td>
 		    	</tr>
 		  	</c:forEach>
 		  </tbody>
 		</table>
-		<button type="button" class="btn btn-primary" onclick="add()">글 작성</button>
+		<c:if test ="${not empty loginid && not empty userName}">
+			<button type="button" class="btn btn-primary" onclick="add()">글 작성</button>
+		</c:if>
 	</div>
 </body>
 </html>

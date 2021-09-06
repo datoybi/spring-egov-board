@@ -29,24 +29,27 @@
 				, INDATE as indate
 			FROM TB_BOARD
 			WHERE 1=1 
-			AND TITLE LIKE '%#{searchWord}%'
+			<if test="searchKeyword != null and searchKeyword != ''">	
+					AND	(TITLE LIKE CONCAT('%', #{searchKeyword}, '%'))
+			</if>
 			ORDER BY IDX DESC	
 			
-</select>
+	</select>
 	
 	<insert id="insertBoard" parameterType="BoardVO">
-
 			INSERT INTO TB_BOARD
-				( ID
-				  , NAME
-				  , DESCRIPTION
-				  , USE_YN
-				  , REG_USER )
-			VALUES ( #{id}
-				  , #{name}
-				  , #{description}
-				  , #{useYn}
-				  , #{regUser} )
+				( IDX
+				, TITLE
+				, CONTENTS
+				, COUNT
+				, WRITER
+				, INDATE )
+			VALUES ( NULL
+				  , #{title}
+				  , #{contents}
+				  , NULL
+				  , #{writer} 
+				  , SYSDATE() )
 
 	</insert>
 
@@ -71,7 +74,7 @@
 	<select id="selectBoard" resultMap="board">
 
 			SELECT
-				IDX, TITLE, CONTENTS, COUNT, WRITER, INDATE
+				IDX, TITLE, CONTENTS, IFNULL(COUNT, 0) as count, WRITER, INDATE
 			FROM TB_BOARD
 			WHERE IDX=#{idx}
 	</select>

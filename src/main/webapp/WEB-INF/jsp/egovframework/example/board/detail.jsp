@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt"  uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -38,22 +39,25 @@
 		<table class="table">
 		  <thead>
 		    <tr>
-		      <th scope="col">1</th>
-		      <th scope="col">test1</th>
-   		      <th scope="col">관리자</th>
-   		      <th scope="col">2021.09.01</th>
-   		      <th scope="col">0</th>
+		      <th scope="col">${result.title}</th>
+   		      <th scope="col">${result.writer}</th>
+   		      <th scope="col">
+   		      	<fmt:parseDate value='${result.indate}' var='thisDate' pattern="yyyymmdd" scope="page"/>
+   		      <fmt:formatDate value="${thisDate}" pattern="yyyy.MM.dd" /></th>
+   		      <th scope="col">${result.count}</th>
 		    </tr>
 		  </thead>
 		  <tbody>
 		    <tr>
-		    	<td colspan="5" style="padding-bottom: 100px;">내용입니다라라라라랄랄내용입니다라라라라랄랄내용입니다라라라라랄랄내용입니다라라라라랄랄내용입니다라라라라랄랄내용입니다라라라라랄랄내용입니다라라라라랄랄내용입니다라라라라랄랄내용입니다라라라라랄랄내용입니다라라라라랄랄</td>
+		    	<td colspan="5" style="padding-bottom: 100px;">${result.contents}</td>
 		    </tr>
 		  </tbody>
 		</table>
 		<button type="button" class="btn btn-primary" onclick="list()">목록</button>
-		<button type="button" class="btn btn-primary" onclick="add()">수정</button>
-		<button type="button" class="btn btn-danger" onclick="">삭제</button>
+		<c:if test="${result.writer == userName}">
+			<button type="button" class="btn btn-primary" onclick="add()">수정</button>
+			<button type="button" class="btn btn-danger" onclick="">삭제</button>
+		</c:if>
 		
 	</div>
 </body>

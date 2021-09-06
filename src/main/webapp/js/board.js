@@ -1,5 +1,5 @@
 function add() {
-	location.href = "/board_test/write.do";
+	location.href = "/board_test/write.do?mode=update";
 }
 
 function login() {
