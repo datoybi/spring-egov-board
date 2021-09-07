@@ -1,6 +1,3 @@
-function add() {
-	location.href = "/board_test/write.do?mode=update";
-}
 
 function login() {
 	let loginForm = document.getElementById("loginForm");

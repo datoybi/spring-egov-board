@@ -21,19 +21,20 @@
 	
 	<select id="searchBoardList" parameterType="BoardVO" resultType="egovMap">
 			SELECT
-				IDX as idx
-				, TITLE as title
-				, CONTENTS as contents
-				, IFNULL(COUNT, 0) as count
-				, WRITER as writer
-				, INDATE as indate
-			FROM TB_BOARD
-			WHERE 1=1 
+				 B.IDX as idx
+				  , B.TITLE as title
+				  , B.CONTENTS as contents
+				  , IFNULL(B.COUNT,0) as count
+				  , B.WRITER as writer
+				  , B.INDATE as indate
+				  , U.user_name as writerName
+			FROM TB_BOARD B LEFT JOIN TB_USER U
+			ON B.writer = U.user_id
+			WHERE 1=1
 			<if test="searchKeyword != null and searchKeyword != ''">	
 					AND	(TITLE LIKE CONCAT('%', #{searchKeyword}, '%'))
 			</if>
 			ORDER BY IDX DESC	
-			
 	</select>
 	
 	<insert id="insertBoard" parameterType="BoardVO">
@@ -56,11 +57,13 @@
 	<update id="updateBoard">
 
 			UPDATE TB_BOARD
-			SET ID=#{id}
-				, NAME=#{name}
-				, DESCRIPTION=#{description}
-				, USE_YN=#{useYn}
-				  WHERE ID=#{id}
+			SET IDX=#{idx}
+				, TITLE=#{title}
+				, CONTENTS=#{contents}
+				, COUNT=#{count}
+				, WRITER=#{writer}
+				, INDATE=SYSDATE()
+				  WHERE IDX=#{idx}
 
 	</update>
 
@@ -72,23 +75,31 @@
 	</delete>
 
 	<select id="selectBoard" resultMap="board">
-
 			SELECT
-				IDX, TITLE, CONTENTS, IFNULL(COUNT, 0) as count, WRITER, INDATE
-			FROM TB_BOARD
-			WHERE IDX=#{idx}
+				 B.IDX as idx
+				  , B.TITLE as title
+				  , B.CONTENTS as contents
+				  , IFNULL(B.COUNT,0) as count
+				  , B.WRITER as writer
+				  , B.INDATE as indate
+				  , U.user_name as writerName
+			FROM TB_BOARD B LEFT JOIN TB_USER U
+			ON B.writer = U.user_id
+			WHERE 1=1 
+			AND B.IDX = #{idx, jdbcType=VARCHAR}
 	</select>
 
 	<select id="selectBoardList" parameterType="boardVO" resultType="egovMap">
-
 			SELECT
-				IDX as idx
-				, TITLE as title
-				, CONTENTS as contents
-				, IFNULL(COUNT, 0) as count
-				, WRITER as writer
-				, INDATE as indate
-			FROM TB_BOARD
+				 B.IDX as idx
+				  , B.TITLE as title
+				  , B.CONTENTS as contents
+				  , IFNULL(B.COUNT,0) as count
+				  , B.WRITER as writer
+				  , B.INDATE as indate
+				  , U.user_name as writerName
+			FROM TB_BOARD B LEFT JOIN TB_USER U
+			ON B.writer = U.user_id
 			WHERE 1=1
 			ORDER BY IDX DESC
 <!-- 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}

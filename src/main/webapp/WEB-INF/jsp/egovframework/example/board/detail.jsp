@@ -14,6 +14,13 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="<c:url value='/js/board.js'/>"></script>
 <title>board detail</title>
+<script type="text/javaScript" language="javascript" defer="defer">
+
+	function update() {
+		location.href = "/board_test/write.do?idx=${result.idx}";
+	}
+
+</script>
 </head>
 <body>
 	<div class="container">
@@ -31,7 +38,7 @@
 			</c:if>
 			<c:if test ="${not empty loginid && not empty userName}">
 				<div class="loginForm">
-					<span>${userName} 님이 로그인하셨습니다.</span>
+					<span>${sessionScope.userName} 님이 로그인하셨습니다.</span>
 					<button type="button" class="btn btn-sm btn-outline-primary" onclick="logout()">로그아웃</button>
  				</div>	
 			</c:if>
@@ -40,7 +47,7 @@
 		  <thead>
 		    <tr>
 		      <th scope="col">${result.title}</th>
-   		      <th scope="col">${result.writer}</th>
+   		      <th scope="col">${result.writerName}</th>
    		      <th scope="col">
    		      	<fmt:parseDate value='${result.indate}' var='thisDate' pattern="yyyymmdd" scope="page"/>
    		      <fmt:formatDate value="${thisDate}" pattern="yyyy.MM.dd" /></th>
@@ -54,11 +61,10 @@
 		  </tbody>
 		</table>
 		<button type="button" class="btn btn-primary" onclick="list()">목록</button>
-		<c:if test="${result.writer == userName}">
-			<button type="button" class="btn btn-primary" onclick="add()">수정</button>
+		<c:if test="${result.writer == sessionScope.loginid}">
+			<button type="button" class="btn btn-primary" onclick="update()">수정</button>
 			<button type="button" class="btn btn-danger" onclick="">삭제</button>
 		</c:if>
-		
 	</div>
 </body>
 </html>

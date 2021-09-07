@@ -15,7 +15,7 @@
 <title>write</title>
 <script type="text/javaScript" language="javascript" defer="defer">
 
-function checkWriteForm() {
+function newPost() {
 	let form = document.getElementById("writeForm");
 	if(form.title.value == '') { 
 		alert('제목을 입력하세요');
@@ -26,9 +26,27 @@ function checkWriteForm() {
 		form.contents.focus();
 		return false;
 	} else {
+		form.action = "<c:url value='/write.do'/>?mode=write";
 		form.submit();
 	}
 }
+
+function updatePost() {
+	let form = document.getElementById("writeForm");
+	if(form.title.value == '') { 
+		alert('제목을 입력하세요');
+		form.title.focus();
+		return false;
+	} else if(form.contents.value == ''){
+		alert('내용을 입력하세요');
+		form.contents.focus();
+		return false;
+	} else {
+		form.action = "<c:url value='/write.do'/>?mode=update";
+		form.submit();
+	}
+}
+
 
 </script>
 </head>
@@ -53,27 +71,34 @@ function checkWriteForm() {
 			  </div>
  			</c:if>
 		  </div>
-		<form id="writeForm" method="post" onsubmit="checkWriteForm(); return false;" action="<c:url value='/write.do'/>">
+		<form id="writeForm" method="post">
+		<input type="hidden" id="idx" value="${result.idx}" name="idx"/>
 		  <div class="input-group mb-3">
 		    <div class="input-group-prepend">
 		      <span class="input-group-text">제목</span>
 		    </div>
-		    <input type="text" class="form-control" id="title" name="title"> 
+		    <input type="text" class="form-control" id="title" name="title" value="${result.title}"> 
 		  </div>
 		  <div class="input-group mb-3">
 		    <div class="input-group-prepend">
 		      <span class="input-group-text">작성자</span>
 		    </div>
-		    <input type="text" class="form-control" value="${userName}" id="writer" name="writer" disabled>
+		    <input type="text" class="form-control" value="${sessionScope.userName}" disabled>
+		    <input type="hidden" value="${sessionScope.loginid}" id="writer" name="writer">
 		  </div>
 		  <div class="input-group mb-3" style="height:300px">
 		    <div class="input-group-prepend">
 		      <span class="input-group-text">내용</span>
 		    </div> 
-		    <textarea class="form-control" style="height:300px" id="contents" name="contents"></textarea>
+		    <textarea class="form-control" style="height:300px" id="contents" name="contents">${result.contents}</textarea>
 		  </div>
-		  	<button class="btn btn-primary" type="submit">작성</button>
-	   		<button class="btn btn-danger" type="button" onclick="list()">취소</button>
+		  <c:if test="${not empty result.idx}">
+		  	<button class="btn btn-primary" type="button" onclick="updatePost()">수정</button>
+		  </c:if>
+		  <c:if test="${empty result.idx}">
+  		  	<button class="btn btn-primary" type="button" onclick="newPost()">작성</button>
+		  </c:if>
+	  		<button class="btn btn-danger" type="button" onclick="list()">취소</button>
 		</form>
 		
 	</div>

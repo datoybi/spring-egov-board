@@ -23,6 +23,10 @@
 		</c:if>
 	})
 	
+	function newpost() {
+	location.href = "/board_test/write.do";
+}
+
 </script>
 </head>
 <body>
@@ -68,7 +72,7 @@
 		  		<tr>
 			      <th scope="row">${status.count}</th>
 			      <td><a href="<c:url value='/detail.do?idx=${result.idx}'/>">${result.title}</a></td>
-			      <td>${result.writer}</td>
+			      <td>${result.writerName}</td>
 	   		      <td><fmt:formatDate value="${result.indate}" pattern="yyyy.MM.dd" /></td>	      
 			      <td>${result.count}</td>
 		    	</tr>
@@ -76,7 +80,7 @@
 		  </tbody>
 		</table>
 		<c:if test ="${not empty loginid && not empty userName}">
-			<button type="button" class="btn btn-primary" onclick="add()">글 작성</button>
+			<button type="button" class="btn btn-primary" onclick="newpost()">글 작성</button>
 		</c:if>
 	</div>
 </body>

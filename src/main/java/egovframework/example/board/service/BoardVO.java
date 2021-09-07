@@ -14,6 +14,7 @@ public class BoardVO {
 	private String contents;
 	private String count;
 	private String writer;
+	private String writerName;
 	private String indate;
 	
 	// tb_reply
@@ -24,6 +25,12 @@ public class BoardVO {
 	private String searchKeyword;
 	
 	
+	public String getWriterName() {
+		return writerName;
+	}
+	public void setWriterName(String writerName) {
+		this.writerName = writerName;
+	}
 	public String getSearchKeyword() {
 		return searchKeyword;
 	}
@@ -103,6 +110,13 @@ public class BoardVO {
 		this.reply = reply;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "BoardVO [userId=" + userId + ", userName=" + userName + ", password=" + password + ", useYn=" + useYn
+				+ ", idx=" + idx + ", title=" + title + ", contents=" + contents + ", count=" + count + ", writer="
+				+ writer + ", indate=" + indate + ", seq=" + seq + ", reply=" + reply + ", searchKeyword="
+				+ searchKeyword + "]";
+	}
+
 
 }

@@ -15,6 +15,8 @@
  */
 package egovframework.example.board.web;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import egovframework.example.board.service.EgovBoardService;
@@ -85,9 +87,10 @@ public class EgovBoardController {
 	
 	@RequestMapping(value ="/detail.do")
 	public String detail(@ModelAttribute("boardVO") BoardVO boardVO, Model model) throws Exception {
-		// System.out.println("[System.out] " + boardVO.getIdx()); 
+		 System.out.println("[System.out] " + boardVO); 
 		BoardVO selectedVO = boardService.selectBoard(boardVO);
-		// System.out.println("[System.out] " + selectedVO.getIdx() + " , " + selectedVO.getContents()); 
+
+		 System.out.println("[System.out] " + selectedVO); 
 
 		model.addAttribute("result", selectedVO);
 		
@@ -95,23 +98,51 @@ public class EgovBoardController {
 	}
 
 	@RequestMapping(value ="/write.do",  method = RequestMethod.GET)
-	public String write() throws Exception {
-//		System.out.println("[System.out] " + "writer get");
+	public String write(@ModelAttribute("boardVO") BoardVO boardVO, ModelMap model, HttpServletRequest request) throws Exception {
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); // 현재 시간 추출
+		Calendar cl = Calendar.getInstance();
+		String strToday = sdf.format(cl.getTime());
+		
+		boardVO = boardService.selectBoard(boardVO);
+		boardVO.setIndate(strToday);
+		boardVO.setWriter(request.getSession().getAttribute("loginid").toString()); // 세션에서 userid 가져오기
+		System.out.println("[System.out] get : " + boardVO);
+
+		model.addAttribute("result", boardVO);
+
+
+//		System.out.println("[System.out] board : " + boardVO.getIdx());
 
 		return "board/write";
 	}
 	
 	@RequestMapping(value = "/write.do", method = RequestMethod.POST)
-	public String write(@ModelAttribute("boardVO") BoardVO boardVO, HttpServletRequest request, @RequestParam("mode") String mode) throws Exception {
+	public String write(@ModelAttribute("boardVO") BoardVO boardVO, @RequestParam("mode") String mode) throws Exception {
 		
-		String writer = (String) request.getSession().getAttribute("userName"); // 이름 세팅
-		boardVO.setWriter(writer);
+		System.out.println("[System.out] mode : " + mode);
+
+		if(mode.equals("write")) { // 글작성에서 왔을 떄	
+			System.out.println("[System.out] write : " + boardVO);
+			boardService.insertBoard(boardVO);
+		} else if (mode.equals("update")) { // 업데이트에서 왔을 떄	
+			System.out.println("[System.out] update : " + boardVO);
+			boardService.updateBoard(boardVO);
+
+		}
+//		
+//		System.out.println("[System.out] : " + mode);
+//		System.out.println("[System.out] : " + boardVO.getIdx());
+//		
+//		String writer = (String) request.getSession().getAttribute("userName"); // 이름 세팅
+//		boardVO.setWriter(writer);
+//		
+//		System.out.println("[System.out] getIdx :  " + boardVO.getIdx());
 		
 //		System.out.println("[System.out] " + boardVO.getContents() + " , " + boardVO.getTitle() + " , " + boardVO.getWriter());
 //		boardService.insertBoard(boardVO);
 		
 		
-		System.out.println("[System.out] " + mode);
 		return "redirect:/list.do";
 	}
 

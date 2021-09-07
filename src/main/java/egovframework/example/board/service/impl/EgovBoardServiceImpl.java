@@ -109,8 +109,11 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
 	@Override
 	public BoardVO selectBoard(BoardVO vo) throws Exception {
 		BoardVO resultVO = boardDAO.selectBoard(vo);
-		if (resultVO == null)
-			throw processException("info.nodata.msg");
+		if (resultVO == null) {
+//			throw processException("info.nodata.msg");
+			resultVO = new BoardVO();
+		}
+			
 		return resultVO;
 	}
 
