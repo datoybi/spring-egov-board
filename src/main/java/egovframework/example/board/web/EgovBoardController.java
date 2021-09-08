@@ -87,11 +87,8 @@ public class EgovBoardController {
 	
 	@RequestMapping(value ="/detail.do")
 	public String detail(@ModelAttribute("boardVO") BoardVO boardVO, Model model) throws Exception {
-		 System.out.println("[System.out] " + boardVO); 
 		BoardVO selectedVO = boardService.selectBoard(boardVO);
-
-		 System.out.println("[System.out] " + selectedVO); 
-
+		System.out.println("[System.out] " + selectedVO); 
 		model.addAttribute("result", selectedVO);
 		
 		return "board/detail";
@@ -167,14 +164,14 @@ public class EgovBoardController {
 	
 	@RequestMapping(value ="/logout.do")
 	public String login(HttpServletRequest request) throws Exception {
-		System.out.println("[System.out] " + request.getSession().getAttribute("loginid"));
-		System.out.println("[System.out] " + request.getSession().getAttribute("userName"));
-		
+//		System.out.println("[System.out] " + request.getSession().getAttribute("loginid"));
+//		System.out.println("[System.out] " + request.getSession().getAttribute("userName"));
+//		
 		request.getSession().invalidate();
-		
-		System.out.println("[System.out] " + request.getSession().getAttribute("loginid"));
-		System.out.println("[System.out] " + request.getSession().getAttribute("userName"));
-	
+//		
+//		System.out.println("[System.out] " + request.getSession().getAttribute("loginid"));
+//		System.out.println("[System.out] " + request.getSession().getAttribute("userName"));
+//	
 		return "redirect:/list.do";
 				
 	}
