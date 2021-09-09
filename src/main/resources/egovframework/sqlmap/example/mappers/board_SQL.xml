@@ -11,6 +11,12 @@
 		<result property="indate" column="indate"/>
 	</resultMap>
 	
+	<update id="updateBoardCount">
+		UPDATE TB_BOARD
+		SET COUNT=IFNULL(COUNT,0)+1
+		WHERE idx = #{idx}
+	</update>
+	
 	<select id="loginCheck" parameterType="BoardVO" resultType="String">
 		SELECT USER_NAME
 		FROM TB_USER
@@ -37,6 +43,19 @@
 			ORDER BY IDX DESC	
 	</select>
 	
+	<select id="selectReplyList" parameterType="BoardVO" resultType="egovMap">
+			SELECT
+				IDX as idx
+				  , SEQ as seq
+				  , REPLY as reply
+				  , WRITER as writer
+				  , INDATE as indate
+			FROM TB_REPLY
+			WHERE 1=1
+			AND idx = #{idx}
+			ORDER BY SEQ DESC	
+	</select>
+	
 	<insert id="insertBoard" parameterType="BoardVO">
 			INSERT INTO TB_BOARD
 				( IDX
@@ -54,6 +73,32 @@
 
 	</insert>
 
+	<insert id="insertReply" parameterType="BoardVO">
+			INSERT INTO TB_REPLY
+				( IDX
+				, SEQ
+				, REPLY
+				, WRITER
+				, INDATE )
+			VALUES ( #{idx}
+				  , #{seq, jdbcType=VARCHAR}
+				  , #{reply}
+				  , #{replyWriter} 
+				  , SYSDATE() )
+				  
+	</insert>
+
+	<select id="replytCnt" parameterType="boardVO" resultType="String">
+			SELECT COUNT(*) totcnt
+			FROM TB_REPLY
+			WHERE 1=1 
+			AND IDX = #{idx}
+			
+	</select>
+	
+	
+
+
 	<update id="updateBoard">
 
 			UPDATE TB_BOARD
@@ -70,7 +115,7 @@
 	<delete id="deleteBoard">
 
 			DELETE FROM TB_BOARD
-			WHERE ID=#{id}
+			WHERE IDX=#{idx}
 
 	</delete>
 

@@ -20,11 +20,17 @@ public class BoardVO {
 	// tb_reply
 	private String seq;
 	private String reply;
+	private String replyWriter;
 	
 	// serach 
 	private String searchKeyword;
 	
-	
+	public String getReplyWriter() {
+		return replyWriter;
+	}
+	public void setReplyWriter(String replyWriter) {
+		this.replyWriter = replyWriter;
+	}
 	public String getWriterName() {
 		return writerName;
 	}
@@ -114,9 +120,10 @@ public class BoardVO {
 	public String toString() {
 		return "BoardVO [userId=" + userId + ", userName=" + userName + ", password=" + password + ", useYn=" + useYn
 				+ ", idx=" + idx + ", title=" + title + ", contents=" + contents + ", count=" + count + ", writer="
-				+ writer + ", indate=" + indate + ", seq=" + seq + ", reply=" + reply + ", searchKeyword="
-				+ searchKeyword + "]";
+				+ writer + ", writerName=" + writerName + ", indate=" + indate + ", seq=" + seq + ", reply=" + reply
+				+ ", replyWriter=" + replyWriter + ", searchKeyword=" + searchKeyword + "]";
 	}
+	
 
 
 }

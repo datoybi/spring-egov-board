@@ -2,13 +2,13 @@
 function login() {
 	let loginForm = document.getElementById("loginForm");
 	
-	if(loginForm.loginid.value == '') { 
+	if(loginForm.userId.value == '') { 
 		alert('아이디를 입력하세요');
-		loginForm.loginid.focus();
+		loginForm.userId.focus();
 		return false;
-	} else if(loginForm.loginpwd.value == ''){
+	} else if(loginForm.password.value == ''){
 		alert('비밀번호를 입력하세요');
-		loginForm.loginpwd.focus();
+		loginForm.password.focus();
 		return false;
 	} else {
 		loginForm.submit();

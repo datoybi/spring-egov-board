@@ -86,23 +86,43 @@ public class EgovBoardController {
 	}
 	
 	@RequestMapping(value ="/detail.do")
-	public String detail(@ModelAttribute("boardVO") BoardVO boardVO, Model model) throws Exception {
-		BoardVO selectedVO = boardService.selectBoard(boardVO);
-		System.out.println("[System.out] " + selectedVO); 
-		model.addAttribute("result", selectedVO);
+	public String detail(@ModelAttribute("boardVO") BoardVO boardVO, Model model, @RequestParam("mode") String mode) throws Exception {
+	 	
+		if(mode.equals("view")){
+		 	System.out.println("[System.out] " + "view");
+			boardService.updateBoardCount(boardVO); // 조회수 증가
+			
+		} else if(mode.equals("reply")) {
+		 	System.out.println("[System.out] " + "reply");
+			// 댓글 등록
+		 	String seq = boardService.replytCnt(boardVO); // seq 세팅을 위해 댓글 수 가져오기
+		 	boardVO.setSeq(seq);
+		 	boardService.insertReply(boardVO);
+
+		}
+	 	// 댓글 보여주기
+	 	List<?> replyList = boardService.selectReplyList(boardVO);
+	 	System.out.println("[System.out] " + replyList);
+
+		boardVO = boardService.selectBoard(boardVO); // 정보 가져오기
+		model.addAttribute("result", boardVO);
 		
 		return "board/detail";
 	}
+	
+	
 
 	@RequestMapping(value ="/write.do",  method = RequestMethod.GET)
 	public String write(@ModelAttribute("boardVO") BoardVO boardVO, ModelMap model, HttpServletRequest request) throws Exception {
+//		
+//		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); // 현재 시간 추출
+//		Calendar cl = Calendar.getInstance();
+//		String strToday = sdf.format(cl.getTime());
+//		
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); // 현재 시간 추출
-		Calendar cl = Calendar.getInstance();
-		String strToday = sdf.format(cl.getTime());
 		
 		boardVO = boardService.selectBoard(boardVO);
-		boardVO.setIndate(strToday);
+//		boardVO.setIndate(strToday);
 		boardVO.setWriter(request.getSession().getAttribute("loginid").toString()); // 세션에서 userid 가져오기
 		System.out.println("[System.out] get : " + boardVO);
 
@@ -120,40 +140,21 @@ public class EgovBoardController {
 		System.out.println("[System.out] mode : " + mode);
 
 		if(mode.equals("write")) { // 글작성에서 왔을 떄	
-			System.out.println("[System.out] write : " + boardVO);
 			boardService.insertBoard(boardVO);
 		} else if (mode.equals("update")) { // 업데이트에서 왔을 떄	
-			System.out.println("[System.out] update : " + boardVO);
 			boardService.updateBoard(boardVO);
-
+		} else if (mode.equals("delete")){
+			boardService.deleteBoard(boardVO);
 		}
-//		
-//		System.out.println("[System.out] : " + mode);
-//		System.out.println("[System.out] : " + boardVO.getIdx());
-//		
-//		String writer = (String) request.getSession().getAttribute("userName"); // 이름 세팅
-//		boardVO.setWriter(writer);
-//		
-//		System.out.println("[System.out] getIdx :  " + boardVO.getIdx());
-		
-//		System.out.println("[System.out] " + boardVO.getContents() + " , " + boardVO.getTitle() + " , " + boardVO.getWriter());
-//		boardService.insertBoard(boardVO);
-		
-		
+
 		return "redirect:/list.do";
 	}
 
 	@RequestMapping(value ="/login.do")
-	public String login(@ModelAttribute("boardVO") BoardVO boardVO, @RequestParam("loginid") String loginid, @RequestParam("loginpwd") String loginpwd, HttpServletRequest request, RedirectAttributes redirectAttributes) throws Exception {
-//		System.out.println("[System.out] " + loginid + " , " + loginpwd);
-
-		BoardVO vo = new BoardVO();
-		vo.setPassword(loginpwd);
-		vo.setUserId(loginid);
-				
-		String userName = boardService.loginCheck(vo);
+	public String login(@ModelAttribute("boardVO") BoardVO boardVO, HttpServletRequest request, RedirectAttributes redirectAttributes) throws Exception {
+		String userName = boardService.loginCheck(boardVO);
 		if(userName != null) {
-			request.getSession().setAttribute("loginid", loginid);
+			request.getSession().setAttribute("loginid", boardVO.getUserId());
 			request.getSession().setAttribute("userName", userName);
 		} else {
 			redirectAttributes.addFlashAttribute("loginMsg" , false);
@@ -163,17 +164,17 @@ public class EgovBoardController {
 	}
 	
 	@RequestMapping(value ="/logout.do")
-	public String login(HttpServletRequest request) throws Exception {
-//		System.out.println("[System.out] " + request.getSession().getAttribute("loginid"));
-//		System.out.println("[System.out] " + request.getSession().getAttribute("userName"));
-//		
+	public String login(HttpServletRequest request) throws Exception {		
 		request.getSession().invalidate();
-//		
-//		System.out.println("[System.out] " + request.getSession().getAttribute("loginid"));
-//		System.out.println("[System.out] " + request.getSession().getAttribute("userName"));
-//	
-		return "redirect:/list.do";
-				
+		return "redirect:/list.do";		
+	}
+	
+	@RequestMapping(value="/reply.do")
+	public String reply(@ModelAttribute("boardVO") BoardVO boardVO) throws Exception {
+		
+		System.out.println("[System.out] " + "ok");
+		
+		return null;
 	}
 
 	

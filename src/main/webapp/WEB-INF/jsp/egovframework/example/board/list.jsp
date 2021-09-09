@@ -10,7 +10,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link type="text/css" rel="stylesheet" href="<c:url value='/css/egovframework/board.css'/>"/>
-<script language="javascript" defer="defer" src="<c:url value='/js/board.js'/>"></script>
+<script language="javascript" defer="defer" src="<c:url value='/js/board.js?ver=1'/>"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -32,6 +32,7 @@
 <body>
 <h1>${loginid} ${userName}</h1>
 <h2>${loginMsg}</h2>
+<h3>${sessionScope.loginid}</h3>
 	<div class="container">
 		<div class="jumbotron">
 			<h2>Egov 게시판 - 목록</h2><br>
@@ -39,8 +40,8 @@
 				<div class="loginForm">
 					<p>로그인</p>
 					<form class="form-inline searchForm" id="loginForm" action="<c:url value='/login.do'/>" method="post" onsubmit="login(); return false;">
-					    <input type="text" class="form-control" id="loginid" placeholder="아이디를 입력하세요" name="loginid">
-					    <input type="password" class="form-control" id="loginpwd" placeholder="비밀번호를 입력하세요" name="loginpwd">
+					    <input type="text" class="form-control" id="userId" placeholder="아이디를 입력하세요" name="userId">
+					    <input type="password" class="form-control" id="password" placeholder="비밀번호를 입력하세요" name="password">
 						<button type="submit" class="btn btn-outline-primary">로그인</button>
 					</form>
 			  	</div>
@@ -71,7 +72,7 @@
 			<c:forEach var="result" items="${resultList}" varStatus="status">
 		  		<tr>
 			      <th scope="row">${status.count}</th>
-			      <td><a href="<c:url value='/detail.do?idx=${result.idx}'/>">${result.title}</a></td>
+			      <td><a href="<c:url value='/detail.do?idx=${result.idx}&mode=view'/>">${result.title}</a></td>
 			      <td>${result.writerName}</td>
 	   		      <td><fmt:formatDate value="${result.indate}" pattern="yyyy.MM.dd" /></td>	      
 			      <td>${result.count}</td>
