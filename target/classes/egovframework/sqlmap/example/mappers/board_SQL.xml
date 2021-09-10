@@ -11,12 +11,6 @@
 		<result property="indate" column="indate"/>
 	</resultMap>
 	
-	<update id="updateBoardCount">
-		UPDATE TB_BOARD
-		SET COUNT=IFNULL(COUNT,0)+1
-		WHERE idx = #{idx}
-	</update>
-	
 	<select id="loginCheck" parameterType="BoardVO" resultType="String">
 		SELECT USER_NAME
 		FROM TB_USER
@@ -24,6 +18,8 @@
 		AND PASSWORD = #{password} 
 		AND USER_ID = #{userId}
 	</select>
+	
+	<!-- REPLY -->
 	
 	<select id="searchBoardList" parameterType="BoardVO" resultType="egovMap">
 			SELECT
@@ -41,7 +37,23 @@
 					AND	(TITLE LIKE CONCAT('%', #{searchKeyword}, '%'))
 			</if>
 			ORDER BY IDX DESC	
+			LIMIT #{firstIndex}, #{recordCountPerPage}
 	</select>
+	
+	<insert id="insertReply" parameterType="BoardVO">
+			INSERT INTO TB_REPLY
+				( IDX
+				, SEQ
+				, REPLY
+				, WRITER
+				, INDATE )
+			VALUES ( #{idx}
+				  , #{seq, jdbcType=VARCHAR}
+				  , #{reply}
+				  , #{replyWriter} 
+				  , SYSDATE() )
+				  
+	</insert>
 	
 	<select id="selectReplyList" parameterType="BoardVO" resultType="egovMap">
 			SELECT
@@ -57,36 +69,21 @@
 	</select>
 	
 	<insert id="insertBoard" parameterType="BoardVO">
-			INSERT INTO TB_BOARD
-				( IDX
-				, TITLE
-				, CONTENTS
-				, COUNT
-				, WRITER
-				, INDATE )
-			VALUES ( NULL
-				  , #{title}
-				  , #{contents}
-				  , NULL
-				  , #{writer} 
-				  , SYSDATE() )
-
+		INSERT INTO TB_BOARD
+			( IDX
+			, TITLE
+			, CONTENTS
+			, COUNT
+			, WRITER
+			, INDATE )
+		VALUES ( NULL
+			  , #{title}
+			  , #{contents}
+			  , NULL
+			  , #{writer} 
+			  , SYSDATE() )
 	</insert>
 
-	<insert id="insertReply" parameterType="BoardVO">
-			INSERT INTO TB_REPLY
-				( IDX
-				, SEQ
-				, REPLY
-				, WRITER
-				, INDATE )
-			VALUES ( #{idx}
-				  , #{seq, jdbcType=VARCHAR}
-				  , #{reply}
-				  , #{replyWriter} 
-				  , SYSDATE() )
-				  
-	</insert>
 
 	<select id="replytCnt" parameterType="boardVO" resultType="String">
 			SELECT COUNT(*) totcnt
@@ -95,67 +92,63 @@
 			AND IDX = #{idx}
 			
 	</select>
-	
-	
 
-
-	<update id="updateBoard">
-
-			UPDATE TB_BOARD
-			SET IDX=#{idx}
-				, TITLE=#{title}
-				, CONTENTS=#{contents}
-				, COUNT=#{count}
-				, WRITER=#{writer}
+	<update id="updateReply">
+			UPDATE TB_REPLY
+			SET REPLY=#{reply}
 				, INDATE=SYSDATE()
-				  WHERE IDX=#{idx}
+			WHERE IDX=#{idx} AND SEQ=#{seq}
+	</update>
+		
+	<delete id="deleteReply">
+			DELETE FROM TB_REPLY
+			WHERE IDX=#{idx} AND SEQ=#{seq}
+	</delete>
+	
+	<!-- BOARD -->
 
+
+	<update id="updateBoardCount">
+		UPDATE TB_BOARD
+		SET COUNT=IFNULL(COUNT,0)+1
+		WHERE idx = #{idx}
+	</update>
+	
+	<update id="updateBoard">
+		UPDATE TB_BOARD
+		SET IDX=#{idx}
+			, TITLE=#{title}
+			, CONTENTS=#{contents}
+			, COUNT=#{count}
+			, WRITER=#{writer}
+			, INDATE=SYSDATE()
+			  WHERE IDX=#{idx}
 	</update>
 
 	<delete id="deleteBoard">
-
-			DELETE FROM TB_BOARD
-			WHERE IDX=#{idx}
-
+		DELETE FROM TB_BOARD
+		WHERE IDX=#{idx}
 	</delete>
 
 	<select id="selectBoard" resultMap="board">
-			SELECT
-				 B.IDX as idx
-				  , B.TITLE as title
-				  , B.CONTENTS as contents
-				  , IFNULL(B.COUNT,0) as count
-				  , B.WRITER as writer
-				  , B.INDATE as indate
-				  , U.user_name as writerName
-			FROM TB_BOARD B LEFT JOIN TB_USER U
-			ON B.writer = U.user_id
-			WHERE 1=1 
-			AND B.IDX = #{idx, jdbcType=VARCHAR}
+		SELECT
+			 B.IDX as idx
+			  , B.TITLE as title
+			  , B.CONTENTS as contents
+			  , IFNULL(B.COUNT,0) as count
+			  , B.WRITER as writer
+			  , B.INDATE as indate
+			  , U.user_name as writerName
+		FROM TB_BOARD B LEFT JOIN TB_USER U
+		ON B.writer = U.user_id
+		WHERE 1=1 
+		AND B.IDX = #{idx, jdbcType=VARCHAR}
 	</select>
 
-	<select id="selectBoardList" parameterType="boardVO" resultType="egovMap">
-			SELECT
-				 B.IDX as idx
-				  , B.TITLE as title
-				  , B.CONTENTS as contents
-				  , IFNULL(B.COUNT,0) as count
-				  , B.WRITER as writer
-				  , B.INDATE as indate
-				  , U.user_name as writerName
-			FROM TB_BOARD B LEFT JOIN TB_USER U
-			ON B.writer = U.user_id
-			WHERE 1=1
-			ORDER BY IDX DESC
-<!-- 			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
- -->	</select>
-
 	<select id="selectBoardListTotCnt" parameterType="boardVO" resultType="int">
-
 			SELECT COUNT(*) totcnt
 			FROM TB_BOARD
 			WHERE 1=1 
-			
 	</select>
 
 </mapper>

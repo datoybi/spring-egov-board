@@ -43,4 +43,8 @@ public interface EgovBoardService {
 	
 	List<?> selectReplyList(BoardVO vo) throws Exception;
 
+	void updateReply(BoardVO vo) throws Exception;
+
+	void deleteReply(BoardVO vo) throws Exception;
+
 }

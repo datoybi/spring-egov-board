@@ -1,6 +1,8 @@
 package egovframework.example.board.service;
 
-public class BoardVO {
+import egovframework.example.sample.service.SampleDefaultVO;
+
+public class BoardVO  extends SampleDefaultVO {
 	
 	// tb_user
 	private String userId;

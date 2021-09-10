@@ -75,70 +75,57 @@ public class EgovBoardController {
 
 	@RequestMapping(value = "/list.do")
 	public String list(@ModelAttribute("boardVO") BoardVO boardVO, Model model) throws Exception {
-		int totCnt = boardService.selectBoardListTotCnt(boardVO);
-//		System.out.println("[System.out] " + totCnt);
-		
-		List<?> list = boardService.searchBoardList(boardVO);
-//		System.out.println("[System.out] " + list);
+		/** EgovPropertyService.sample */
+		boardVO.setPageUnit(propertiesService.getInt("pageUnit"));
+		boardVO.setPageSize(propertiesService.getInt("pageSize"));
 
+		/** paging setting */
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(boardVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(boardVO.getPageUnit());
+		paginationInfo.setPageSize(boardVO.getPageSize());
+
+		boardVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		boardVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		boardVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+		
+		int totCnt = boardService.selectBoardListTotCnt(boardVO);
+		List<?> list = boardService.searchBoardList(boardVO);
+				
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("paginationInfo", paginationInfo);
 		model.addAttribute("resultList", list);
 		return "board/list";
 	}
 	
 	@RequestMapping(value ="/detail.do")
-	public String detail(@ModelAttribute("boardVO") BoardVO boardVO, Model model, @RequestParam("mode") String mode) throws Exception {
+	public String detail(@ModelAttribute("boardVO") BoardVO boardVO, ModelMap model) throws Exception {
 	 	
-		if(mode.equals("view")){
-		 	System.out.println("[System.out] " + "view");
-			boardService.updateBoardCount(boardVO); // 조회수 증가
-			
-		} else if(mode.equals("reply")) {
-		 	System.out.println("[System.out] " + "reply");
-			// 댓글 등록
-		 	String seq = boardService.replytCnt(boardVO); // seq 세팅을 위해 댓글 수 가져오기
-		 	boardVO.setSeq(seq);
-		 	boardService.insertReply(boardVO);
-
-		}
-	 	// 댓글 보여주기
-	 	List<?> replyList = boardService.selectReplyList(boardVO);
-	 	System.out.println("[System.out] " + replyList);
-
-		boardVO = boardService.selectBoard(boardVO); // 정보 가져오기
-		model.addAttribute("result", boardVO);
+	 	System.out.println("[System.out] detail idx: " + boardVO.getIdx());
+		boardService.updateBoardCount(boardVO); // 조회수 증가
 		
+		boardVO = boardService.selectBoard(boardVO);
+		model.addAttribute("result", boardVO);
+
+	 	List<?> replyList = boardService.selectReplyList(boardVO);
+	 	model.addAttribute("replyList", replyList);
+	 	
 		return "board/detail";
 	}
-	
-	
 
 	@RequestMapping(value ="/write.do",  method = RequestMethod.GET)
 	public String write(@ModelAttribute("boardVO") BoardVO boardVO, ModelMap model, HttpServletRequest request) throws Exception {
-//		
-//		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); // 현재 시간 추출
-//		Calendar cl = Calendar.getInstance();
-//		String strToday = sdf.format(cl.getTime());
-//		
-		
 		
 		boardVO = boardService.selectBoard(boardVO);
-//		boardVO.setIndate(strToday);
 		boardVO.setWriter(request.getSession().getAttribute("loginid").toString()); // 세션에서 userid 가져오기
-		System.out.println("[System.out] get : " + boardVO);
 
 		model.addAttribute("result", boardVO);
-
-
-//		System.out.println("[System.out] board : " + boardVO.getIdx());
-
 		return "board/write";
 	}
 	
 	@RequestMapping(value = "/write.do", method = RequestMethod.POST)
 	public String write(@ModelAttribute("boardVO") BoardVO boardVO, @RequestParam("mode") String mode) throws Exception {
 		
-		System.out.println("[System.out] mode : " + mode);
-
 		if(mode.equals("write")) { // 글작성에서 왔을 떄	
 			boardService.insertBoard(boardVO);
 		} else if (mode.equals("update")) { // 업데이트에서 왔을 떄	
@@ -169,119 +156,23 @@ public class EgovBoardController {
 		return "redirect:/list.do";		
 	}
 	
-	@RequestMapping(value="/reply.do")
-	public String reply(@ModelAttribute("boardVO") BoardVO boardVO) throws Exception {
+	@RequestMapping(value="/reply.do", method = RequestMethod.POST)
+	public String reply(@ModelAttribute("boardVO") BoardVO boardVO, ModelMap model, @RequestParam("mode") String mode) throws Exception {
 		
-		System.out.println("[System.out] " + "ok");
+		if(mode.equals("write")){
+			String seq = boardService.replytCnt(boardVO); // seq 세팅을 위해 댓글 수 가져오기
+		 	boardVO.setSeq(seq);
+		 	boardService.insertReply(boardVO);
+
+		} else if(mode.equals("update")){
+			boardService.updateReply(boardVO);
+		} else if(mode.equals("delete")){
+			boardService.deleteReply(boardVO);
+		}
 		
-		return null;
-	}
-
-	
-//	/**
-//	 * 글 등록 화면을 조회한다.
-//	 * @param boardVO - 목록 조회조건 정보가 담긴 VO
-//	 * @param model
-//	 * @return "egovBoardRegister"
-//	 * @exception Exception
-//	 */
-//	@RequestMapping(value = "/addBoard.do", method = RequestMethod.GET)
-//	public String addBoardView(@ModelAttribute("boardVO") BoardDefaultVO boardVO, Model model) throws Exception {
-//		model.addAttribute("boardVO", new BoardVO());
-//		return "board/egovBoardRegister";
-//	}
-//
-//	/**
-//	 * 글을 등록한다.
-//	 * @param boardVO - 등록할 정보가 담긴 VO
-//	 * @param boardVO - 목록 조회조건 정보가 담긴 VO
-//	 * @param status
-//	 * @return "forward:/egovBoardList.do"
-//	 * @exception Exception
-//	 */
-//	@RequestMapping(value = "/addBoard.do", method = RequestMethod.POST)
-//	public String addBoard(@ModelAttribute("boardVO") BoardDefaultVO boardVO, BoardVO boardVO, BindingResult bindingResult, Model model, SessionStatus status)
-//			throws Exception {
-//
-//		// Server-Side Validation
-//		beanValidator.validate(boardVO, bindingResult);
-//
-//		if (bindingResult.hasErrors()) {
-//			model.addAttribute("boardVO", boardVO);
-//			return "board/egovBoardRegister";
-//		}
-//
-//		boardService.insertBoard(boardVO);
-//		status.setComplete();
-//		return "forward:/egovBoardList.do";
-//	}
-//
-//	/**
-//	 * 글 수정화면을 조회한다.
-//	 * @param id - 수정할 글 id
-//	 * @param boardVO - 목록 조회조건 정보가 담긴 VO
-//	 * @param model
-//	 * @return "egovBoardRegister"
-//	 * @exception Exception
-//	 */
-//	@RequestMapping("/updateBoardView.do")
-//	public String updateBoardView(@RequestParam("selectedId") String id, @ModelAttribute("boardVO") BoardDefaultVO boardVO, Model model) throws Exception {
-//		BoardVO boardVO = new BoardVO();
-//		boardVO.setId(id);
-//		// 변수명은 CoC 에 따라 boardVO
-//		model.addAttribute(selectBoard(boardVO, boardVO));
-//		return "board/egovBoardRegister";
-//	}
-//
-//	/**
-//	 * 글을 조회한다.
-//	 * @param boardVO - 조회할 정보가 담긴 VO
-//	 * @param boardVO - 목록 조회조건 정보가 담긴 VO
-//	 * @param status
-//	 * @return @ModelAttribute("boardVO") - 조회한 정보
-//	 * @exception Exception
-//	 */
-//	public BoardVO selectBoard(BoardVO boardVO, @ModelAttribute("boardVO") BoardDefaultVO boardVO) throws Exception {
-//		return boardService.selectBoard(boardVO);
-//	}
-//
-//	/**
-//	 * 글을 수정한다.
-//	 * @param boardVO - 수정할 정보가 담긴 VO
-//	 * @param boardVO - 목록 조회조건 정보가 담긴 VO
-//	 * @param status
-//	 * @return "forward:/egovBoardList.do"
-//	 * @exception Exception
-//	 */
-//	@RequestMapping("/updateBoard.do")
-//	public String updateBoard(@ModelAttribute("boardVO") BoardDefaultVO boardVO, BoardVO boardVO, BindingResult bindingResult, Model model, SessionStatus status)
-//			throws Exception {
-//
-//		beanValidator.validate(boardVO, bindingResult);
-//
-//		if (bindingResult.hasErrors()) {
-//			model.addAttribute("boardVO", boardVO);
-//			return "board/egovBoardRegister";
-//		}
-//
-//		boardService.updateBoard(boardVO);
-//		status.setComplete();
-//		return "forward:/egovBoardList.do";
-//	}
-//
-//	/**
-//	 * 글을 삭제한다.
-//	 * @param boardVO - 삭제할 정보가 담긴 VO
-//	 * @param boardVO - 목록 조회조건 정보가 담긴 VO
-//	 * @param status
-//	 * @return "forward:/egovBoardList.do"
-//	 * @exception Exception
-//	 */
-//	@RequestMapping("/deleteBoard.do")
-//	public String deleteBoard(BoardVO boardVO, @ModelAttribute("boardVO") BoardDefaultVO boardVO, SessionStatus status) throws Exception {
-//		boardService.deleteBoard(boardVO);
-//		status.setComplete();
-//		return "forward:/egovBoardList.do";
-//	}
-
+	 	List<?> replyList = boardService.selectReplyList(boardVO);	 	
+	 	model.addAttribute("replyList", replyList);
+	 	
+		return "redirect:/detail.do?idx=" + boardVO.getIdx();
+	}	
 }

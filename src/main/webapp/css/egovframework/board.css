@@ -26,3 +26,10 @@
 	border: 2px solid #e9ecef;
     background: #ffffff;
 }
+
+.card-link {
+	color: #007bff;
+    text-decoration: none;
+    background-color: transparent;
+    border: 0;
+}

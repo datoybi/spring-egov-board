@@ -61,6 +61,10 @@ public interface BoardMapper {
 	String replytCnt(BoardVO vo);
 	
 	List<?> selectReplyList(BoardVO vo) throws Exception;
+	
+	void updateReply(BoardVO vo) throws Exception;
 
+	void deleteReply(BoardVO vo) throws Exception;
 
+	
 }

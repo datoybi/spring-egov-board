@@ -52,12 +52,12 @@ public class EgovImgPaginationRenderer extends AbstractPaginationRenderer implem
 	*/
 	public void initVariables() {
 
-		firstPageLabel = "<a href=\"#\" onclick=\"{0}({1}); return false;\">" + "<image src='" + servletContext.getContextPath() + "/images/egovframework/cmmn/btn_page_pre10.gif' border=0/></a>&#160;";
-		previousPageLabel = "<a href=\"#\" onclick=\"{0}({1}); return false;\">" + "<image src='" + servletContext.getContextPath() + "/images/egovframework/cmmn/btn_page_pre1.gif' border=0/></a>&#160;";
-		currentPageLabel = "<strong>{0}</strong>&#160;";
-		otherPageLabel = "<a href=\"#\" onclick=\"{0}({1}); return false;\">{2}</a>&#160;";
-		nextPageLabel = "<a href=\"#\" onclick=\"{0}({1}); return false;\">" + "<image src='" + servletContext.getContextPath() + "/images/egovframework/cmmn/btn_page_next1.gif' border=0/></a>&#160;";
-		lastPageLabel = "<a href=\"#\" onclick=\"{0}({1}); return false;\">" + "<image src='" + servletContext.getContextPath() + "/images/egovframework/cmmn/btn_page_next10.gif' border=0/></a>&#160;";
+		firstPageLabel = "<li><a href=\"#\" onclick=\"{0}({1}); return false;\"><<</a></li>";
+		previousPageLabel = "<li><a href=\"#\" onclick=\"{0}({1}); return false;\"><</a></li>";
+		currentPageLabel = "<li class=\"active\"><a href=\"#\">{0}</a></li>";
+		otherPageLabel = "<li><a href=\"#\" onclick=\"{0}({1}); return false;\">{2}</a></li>";
+		nextPageLabel = "<li><a href=\"#\" onclick=\"{0}({1}); return false;\">></a></li>";
+		lastPageLabel = "<li><a href=\"#\" onclick=\"{0}({1}); return false;\">>></a></li>";
 	}
 
 	@Override

@@ -3,6 +3,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form"   uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="fmt"  uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="ui" uri="http://egovframework.gov/ctl/ui"%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -26,13 +28,14 @@
 	function newpost() {
 	location.href = "/board_test/write.do";
 }
+	
+	function page(pageNo) {
+    	location.href = "<c:url value='/list.do'/>?pageIndex="+pageNo;
+	}
 
 </script>
 </head>
 <body>
-<h1>${loginid} ${userName}</h1>
-<h2>${loginMsg}</h2>
-<h3>${sessionScope.loginid}</h3>
 	<div class="container">
 		<div class="jumbotron">
 			<h2>Egov 게시판 - 목록</h2><br>
@@ -72,7 +75,7 @@
 			<c:forEach var="result" items="${resultList}" varStatus="status">
 		  		<tr>
 			      <th scope="row">${status.count}</th>
-			      <td><a href="<c:url value='/detail.do?idx=${result.idx}&mode=view'/>">${result.title}</a></td>
+			      <td><a href="<c:url value='/detail.do?idx=${result.idx}'/>">${result.title}</a></td>
 			      <td>${result.writerName}</td>
 	   		      <td><fmt:formatDate value="${result.indate}" pattern="yyyy.MM.dd" /></td>	      
 			      <td>${result.count}</td>
@@ -80,6 +83,11 @@
 		  	</c:forEach>
 		  </tbody>
 		</table>
+		<div id="paging">
+			<ul class="pagination">
+				<ui:pagination paginationInfo = "${paginationInfo}" type="image" jsFunction="page" />
+			</ul>
+ 	 	</div>	
 		<c:if test ="${not empty loginid && not empty userName}">
 			<button type="button" class="btn btn-primary" onclick="newpost()">글 작성</button>
 		</c:if>

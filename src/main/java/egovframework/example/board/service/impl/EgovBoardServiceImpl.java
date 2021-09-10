@@ -126,4 +126,12 @@ public class EgovBoardServiceImpl extends EgovAbstractServiceImpl implements Ego
 	public List<?> selectReplyList(BoardVO vo) throws Exception {
 		return boardDAO.selectReplyList(vo);
 	}
+	
+	public void updateReply(BoardVO vo) throws Exception {
+		boardDAO.updateReply(vo);
+	}
+	
+	public void deleteReply(BoardVO vo) throws Exception {
+		boardDAO.deleteReply(vo);
+	}
 }

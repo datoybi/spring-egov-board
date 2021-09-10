@@ -2,6 +2,7 @@
 <%@ taglib prefix="c"   uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt"  uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fmt"  uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <%
 	pageContext.setAttribute("replaceChar", "\n"); // br
@@ -12,7 +13,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-<link type="text/css" rel="stylesheet" href="<c:url value='/css/egovframework/board.css'/>"/>
+<link type="text/css" rel="stylesheet" href="<c:url value='/css/egovframework/board.css?ver=1'/>"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -47,10 +48,38 @@
 			alert("내용을 입력하세요");
 			form.reply.focus();
 		}
-		form.action = "/board_test/detail.do?idx=${result.idx}&mode=reply";
+		form.action = "/board_test/reply.do?idx=${result.idx}&mode=write";
 		form.submit();
 	}
+	
+	function replyUpdate(id) {
+	
+		let fullid = "#ReplyContents" + id;
+		$(fullid).hide();
+	 
+		var newForm = $('<form></form>'); //set attribute (form) 
+		newForm.attr("name","newForm"); 
+		newForm.attr("method","post"); 
+		newForm.attr("action","/board_test/reply.do?idx=${result.idx}&mode=update&seq="+id); 
+		newForm.append($('<textarea/>', {type: 'text', name: 'reply', value:'reply', style: 'width: 100%; height: 100px; margin-bottom: 10px;', text: $(fullid +"> p").text() })); 
+		newForm.append($('<button/>', {class: 'btn btn-sm btn-outline-primary', text: '수정', value:'submit'})); 
+		newForm.append($('<button/>', {class: 'btn btn-sm btn-outline-primary', style: 'margin-left: 10px', text: '취소' })); 	
+		newForm.appendTo($('#cardBody'+id)); 
+	}
 
+	function replyDelete(id) {	
+		
+		let delConfirm = confirm("정말로 삭제하시겠습니까?");
+		
+		if(delConfirm == true){ // 삭제 클릭하면 form과 더불어 seq, idx 보내주기
+			var newForm = $('<form></form>');
+			newForm.attr("name","newForm"); 
+			newForm.attr("method","post"); 
+			newForm.attr("action","/board_test/reply.do?idx=${result.idx}&mode=delete&seq="+id); 
+			$(document.body).append(newForm);
+			newForm.submit();
+		}	
+	}
 	
 </script>
 </head>
@@ -75,8 +104,7 @@
  				</div>	
 			</c:if>
 		</div>
-<h3>${result.idx }</h3>		
-		<form id="form1" name="form1" method="post">
+		<form id="form1" name="form1" method="post" style="padding-bottom: 100px;">
 			<table class="table">
 			  <thead>
 			    <tr>
@@ -94,8 +122,29 @@
 			    </tr>
 			  </tbody>
 			</table>
+			<c:if test="${result.writer == sessionScope.loginid}">
+				<button type="button" class="btn btn-primary" onclick="updatePost()">수정</button>
+				<button type="button" class="btn btn-danger" onclick="deletePost()">삭제</button>
+			</c:if>
 		</form>
-		<!-- 댓글 -->
+		
+		<!-- 댓글보기 -->
+		<c:forEach var="replyList" items="${replyList}" varStatus="status">
+			<div class="card">
+			  <div class="card-body" id="cardBody${replyList.seq}">
+			    <h5 class="card-title" style="font-weight: bold;">${replyList.writer}</h5>
+			    <h6 class="card-subtitle mb-2 text-muted"><fmt:formatDate value="${replyList.indate}" pattern="yyyy년 MM월 dd일 hh시 mm분에 작성" /></h6>
+			   <!--  <h6 class="card-subtitle mb-2 text-muted">${replyList.indate}</h6>--> 
+			    <div id="ReplyContents${replyList.seq}">			    
+				    <p class="card-text">${fn:replace(replyList.reply, replaceChar, "<br/>")} </p>
+				    <button class="card-link" id="${replyList.seq}" onclick="replyUpdate(this.id)">수정</button>
+	   			    <button class="card-link" id="${replyList.seq}" onclick="replyDelete(this.id)">삭제</button>    
+			    </div>
+			  </div>
+			</div>
+ 		</c:forEach>
+ 		
+		<!-- 댓글작성 -->
 		<div class="jumbotron jumbo_custom">
 		<h3>댓글 작성</h3><br>
 			<form id="replyForm" name="replyForm" method="post">
@@ -109,16 +158,13 @@
 		      		<div class="input-group-prepend">
 		        		<span class="input-group-text">내용</span>
 		      		</div>
-				    	<textarea rows="10" id="reply" name="reply" style="border: 1px solid #ced4da; width:94%"></textarea>
+				    <textarea rows="10" id="reply" name="reply" style="border: 1px solid #ced4da; width:94%"></textarea>
 		      	</div>
 		      	<button type="button" class="btn btn-info" onclick="writeReply()">댓글작성</button>
 			</form>		
 		</div>
 		<button type="button" class="btn btn-primary" onclick="list()">목록</button>
-		<c:if test="${result.writer == sessionScope.loginid}">
-			<button type="button" class="btn btn-primary" onclick="updatePost()">수정</button>
-			<button type="button" class="btn btn-danger" onclick="deletePost()">삭제</button>
-		</c:if>
+		
 	</div>
 </body>
 </html>
